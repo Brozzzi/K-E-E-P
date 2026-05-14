@@ -1,9 +1,7 @@
 package org.example;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import de.gurkenlabs.input4j.InputComponent;
@@ -11,7 +9,11 @@ import de.gurkenlabs.input4j.InputDevice;
 import de.gurkenlabs.input4j.InputDevices;
 
 public class Main {
-    static void main() {
+    Map<InputComponent.ID, Boolean> buttons = new HashMap<>();
+
+
+    void main() {
+
         // Setup
         InputDevice selectedDevice = null;
         Scanner scanner = new Scanner(System.in);
@@ -62,6 +64,16 @@ public class Main {
                             var eingabeInt = Integer.parseInt(controllerEingabe);
                             selectedDevice = existingDevices.get(eingabeInt - 1);
 
+
+                            var liste = selectedDevice.getComponents();
+                            for (var component : liste) {
+                                this.buttons.put(component.getId(), false);
+                            }
+
+                            for (var component : liste) {
+                                selectedDevice.onButtonPressed(component.getId(), buttonPressed(component));
+                                selectedDevice.onButtonReleased(component.getId(), buttonReleased(component));
+                            }
                         }
                         else {
                             System.out.println("Keine Controller gefunden");
@@ -88,13 +100,20 @@ public class Main {
                         var ausführung = true;
                         while (ausführung) {
                             try {
-                                selectedDevice.poll();
-                                var liste = selectedDevice.getComponents();
-                                for (var component : liste) {
-                                    System.out.println(component);
+//                                selectedDevice.poll();
+
+                                List<String> controllerButtons = new ArrayList<>();
+                                for (var button : this.buttons.entrySet()) {
+                                    if (button.getValue() == true) {
+                                        controllerButtons.add(button.getKey().toString());
+                                    }
+                                }
+                                if (!controllerButtons.isEmpty()) {
+                                    System.out.print("\r");
+                                    System.out.print(controllerButtons);
                                 }
 
-                                TimeUnit.MILLISECONDS.sleep(500);
+                                TimeUnit.MILLISECONDS.sleep(300);
                             } catch (Exception e) {
                                 ausführung = false;
                             }
@@ -115,8 +134,13 @@ public class Main {
         }
     }
 
-    public static Runnable buttonPressed(InputComponent button){
-        System.out.println(button);
+    public Runnable buttonPressed(InputComponent button){
+        this.buttons.put(button.getId(), true);
+        return null;
+    }
+
+    public Runnable buttonReleased(InputComponent button){
+        this.buttons.put(button.getId(), false);
         return null;
     }
 
