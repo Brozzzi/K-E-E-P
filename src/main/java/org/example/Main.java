@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
+import de.gurkenlabs.input4j.InputComponent;
 import de.gurkenlabs.input4j.InputDevice;
-import de.gurkenlabs.input4j.InputDevicePlugin;
 import de.gurkenlabs.input4j.InputDevices;
 
 public class Main {
@@ -20,7 +20,13 @@ public class Main {
 
         while (running) {
             // Terminal bereinigen
-            System.out.print("\033[H\033[2J");
+//            System.out.print("\033[H\033[2J");
+//            clearScreen();
+
+
+            System.out.print("\033\143");
+
+
 
             System.out.println("Willkommen beim Kontroller-Eingabge-Erkennungs-Programm");
             if (null == selectedDevice){
@@ -55,6 +61,7 @@ public class Main {
                             scanner.nextLine();
                             var eingabeInt = Integer.parseInt(controllerEingabe);
                             selectedDevice = existingDevices.get(eingabeInt - 1);
+
                         }
                         else {
                             System.out.println("Keine Controller gefunden");
@@ -77,16 +84,17 @@ public class Main {
                         scanner.nextLine();
                     }else {
                         System.out.println("Ausgewählt: " + selectedDevice.getProductName());
+                        System.out.println("Drücke einen Knopf um ihn anzuzeigen");
                         var ausführung = true;
                         while (ausführung) {
                             try {
                                 selectedDevice.poll();
                                 var liste = selectedDevice.getComponents();
                                 for (var component : liste) {
-                                    System.out.print(component);
+                                    System.out.println(component);
                                 }
+
                                 TimeUnit.MILLISECONDS.sleep(500);
-                                System.out.print("\r");
                             } catch (Exception e) {
                                 ausführung = false;
                             }
@@ -106,4 +114,15 @@ public class Main {
             }
         }
     }
+
+    public static Runnable buttonPressed(InputComponent button){
+        System.out.println(button);
+        return null;
+    }
+
+    public static void clearScreen() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
+
 }
