@@ -1,7 +1,10 @@
 package org.example;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 import de.gurkenlabs.input4j.InputDevice;
 import de.gurkenlabs.input4j.InputDevicePlugin;
@@ -10,17 +13,22 @@ import de.gurkenlabs.input4j.InputDevices;
 public class Main {
     static void main() {
         // Setup
-        InputDevice selectedDevice;
+        InputDevice selectedDevice = null;
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
+        List<InputDevice> existingDevices = new ArrayList<>();
 
         while (running) {
             // Terminal bereinigen
             System.out.print("\033[H\033[2J");
 
             System.out.println("Willkommen beim Kontroller-Eingabge-Erkennungs-Programm");
-            //TODO: Gucken ob ein Controller ausgewählt wurde, Status im Print anzeigen
-            System.out.println("Status: ");
+            if (null == selectedDevice){
+                System.out.println("Ausgewählt: ");
+            }
+            else {
+                System.out.println("Ausgewählt: " +  selectedDevice.getProductName());
+            }
             System.out.println();
             System.out.println(" 1. Kontroller Auswählen");
             System.out.println(" 2. Kontroller testen");
@@ -34,35 +42,57 @@ public class Main {
                 case "1":
 
                     try (var inputDevices = InputDevices.init()) {
-                        while (!inputDevices.getAll().isEmpty()){
+                        if (!inputDevices.getAll().isEmpty()) {
+
                             var number = 1;
                             for (var inputDevice : inputDevices.getAll()){
-                                inputDevice.poll();
-                                System.out.println(number + ". " + inputDevice.getProductName() + ":" + inputDevice.getComponents());
+                                System.out.println(number + ". " + inputDevice.getProductName());
+                                existingDevices.add(inputDevice);
                                 number++;
                             }
+                            System.out.println("Gerät auswählen");
+                            var controllerEingabe = scanner.next();
+                            scanner.nextLine();
+                            var eingabeInt = Integer.parseInt(controllerEingabe);
+                            selectedDevice = existingDevices.get(eingabeInt - 1);
                         }
+                        else {
+                            System.out.println("Keine Controller gefunden");
+                            System.out.println("Drücke belibige Taste um fortzufahren");
 
-//                        if (inputDevice == null) {
-//                            System.out.println("Kein Gerät gefunden");
-//                            return;
-//                        var inputDevice = inputDevices.getAll().stream().findFirst().orElse(null);
-//
-//                        }
-
+                            scanner.nextLine();
+                            continue;
+                        }
                     } catch (IOException e) {
                         throw new RuntimeException(e);
 
                     }
-
-                    System.out.println("Funktion noch in Arbeit. Drücke Enter um fortzufahren...");
-                    scanner.nextLine();
                     break;
 
 
                 case "2":
-                    System.out.println("Funktion noch in Arbeit. Drücke Enter um fortzufahren...");
-                    scanner.nextLine();
+                    if (selectedDevice == null) {
+                        System.out.println("Keine Controller ausgewählt");
+                        System.out.println("Drücke belibige Taste um fortzufahren");
+                        scanner.nextLine();
+                    }else {
+                        System.out.println("Ausgewählt: " + selectedDevice.getProductName());
+                        var ausführung = true;
+                        while (ausführung) {
+                            try {
+                                selectedDevice.poll();
+                                var liste = selectedDevice.getComponents();
+                                for (var component : liste) {
+                                    System.out.print(component);
+                                }
+                                TimeUnit.MILLISECONDS.sleep(500);
+                                System.out.print("\r");
+                            } catch (Exception e) {
+                                ausführung = false;
+                            }
+                        }
+                    }
+
 
                     break;
 
