@@ -1,4 +1,4 @@
-package org.example;
+package org.keep;
 
 import java.io.IOException;
 import java.util.*;
@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import de.gurkenlabs.input4j.InputComponent;
 import de.gurkenlabs.input4j.InputDevice;
 import de.gurkenlabs.input4j.InputDevices;
+
 
 public class Main {
     Map<InputComponent.ID, Boolean> buttons = new HashMap<>();
@@ -20,28 +21,26 @@ public class Main {
         boolean running = true;
         List<InputDevice> existingDevices = new ArrayList<>();
 
+        Farben farbe = new Farben();
+
         while (running) {
-            // Terminal bereinigen
-//            System.out.print("\033[H\033[2J");
-//            clearScreen();
 
+            clearScreen();
 
-            System.out.print("\033\143");
-
-
-
-            System.out.println("Willkommen beim Kontroller-Eingabge-Erkennungs-Programm");
+            System.out.println("Willkommen beim " + farbe.fett +  "Kontroller-Eingabge-Erkennungs-Programm" + farbe.reset);
+            System.out.println();
             if (null == selectedDevice){
-                System.out.println("Ausgewählt: ");
+                System.out.println("Status:"  + farbe.rot + " ---Kein Kontroller ausgewählt---" + farbe.reset);
             }
             else {
-                System.out.println("Ausgewählt: " +  selectedDevice.getProductName());
+                System.out.println("Status: " + farbe.grün + selectedDevice.getProductName() + farbe.reset);
             }
             System.out.println();
             System.out.println(" 1. Kontroller Auswählen");
             System.out.println(" 2. Kontroller testen");
             System.out.println(" 3. Programm schließen");
 
+            System.out.println();
             System.out.println("Wählen sie ein Menüpunkt aus (1-3): ");
             String eingabe = scanner.next();
             scanner.nextLine();
@@ -58,6 +57,7 @@ public class Main {
                                 existingDevices.add(inputDevice);
                                 number++;
                             }
+                            clearScreen();
                             System.out.println("Gerät auswählen");
                             var controllerEingabe = scanner.next();
                             scanner.nextLine();
@@ -76,7 +76,8 @@ public class Main {
                             }
                         }
                         else {
-                            System.out.println("Keine Controller gefunden");
+                            clearScreen();
+                            System.out.println(farbe.gelb + "Keine Controller gefunden" + farbe.reset);
                             System.out.println("Drücke belibige Taste um fortzufahren");
 
                             scanner.nextLine();
@@ -91,11 +92,13 @@ public class Main {
 
                 case "2":
                     if (selectedDevice == null) {
-                        System.out.println("Keine Controller ausgewählt");
+                        clearScreen();
+                        System.out.println(farbe.gelb +"Keine Controller ausgewählt" + farbe.reset);
                         System.out.println("Drücke belibige Taste um fortzufahren");
                         scanner.nextLine();
                     }else {
-                        System.out.println("Ausgewählt: " + selectedDevice.getProductName());
+                        clearScreen();
+                        System.out.println("Ausgewählt: " + farbe.grün + selectedDevice.getProductName() + farbe.reset);
                         System.out.println("Drücke einen Knopf um ihn anzuzeigen");
                         var ausführung = true;
                         while (ausführung) {
@@ -125,6 +128,7 @@ public class Main {
 
 
                 case "3":
+                    clearScreen();
                     System.out.println("Programm wird beendet. Drücke Enter um fortzufahren...");
                     scanner.nextLine();
                     running = false;
@@ -145,8 +149,16 @@ public class Main {
     }
 
     public static void clearScreen() {
-        System.out.print("\033[H\033[2J");
-        System.out.flush();
+        int zeilen = 50;
+        for (int zeile = 0; zeile <= zeilen; zeile++) {
+            System.out.println();
+        }
+    }
+
+    public static void clearScreenSpace(int zeilen) {
+        for (int zeile = 0; zeile <= zeilen; zeile++) {
+            System.out.println();
+        }
     }
 
 }
