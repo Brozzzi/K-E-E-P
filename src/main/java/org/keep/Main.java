@@ -7,11 +7,11 @@ import java.util.concurrent.TimeUnit;
 import de.gurkenlabs.input4j.InputComponent;
 import de.gurkenlabs.input4j.InputDevice;
 import de.gurkenlabs.input4j.InputDevices;
+import de.gurkenlabs.input4j.components.XInput;
 
 
 public class Main {
     Map<InputComponent.ID, Boolean> buttons = new HashMap<>();
-
 
     void main() {
 
@@ -27,12 +27,11 @@ public class Main {
 
             clearScreen();
 
-            System.out.println("Willkommen beim " + farbe.fett +  "Kontroller-Eingabge-Erkennungs-Programm" + farbe.reset);
+            System.out.println("Willkommen beim " + farbe.fett + "Kontroller-Eingabge-Erkennungs-Programm" + farbe.reset);
             System.out.println();
-            if (null == selectedDevice){
-                System.out.println("Status:"  + farbe.rot + " ---Kein Kontroller ausgewählt---" + farbe.reset);
-            }
-            else {
+            if (null == selectedDevice) {
+                System.out.println("Status:" + farbe.rot + " ---Kein Kontroller ausgewählt---" + farbe.reset);
+            } else {
                 System.out.println("Status: " + farbe.grün + selectedDevice.getProductName() + farbe.reset);
             }
             System.out.println();
@@ -50,14 +49,14 @@ public class Main {
 
                     try (var inputDevices = InputDevices.init()) {
                         if (!inputDevices.getAll().isEmpty()) {
+                            clearScreen();
 
                             var number = 1;
-                            for (var inputDevice : inputDevices.getAll()){
+                            for (var inputDevice : inputDevices.getAll()) {
                                 System.out.println(number + ". " + inputDevice.getProductName());
                                 existingDevices.add(inputDevice);
                                 number++;
                             }
-                            clearScreen();
                             System.out.println("Gerät auswählen");
                             var controllerEingabe = scanner.next();
                             scanner.nextLine();
@@ -74,8 +73,7 @@ public class Main {
                                 selectedDevice.onButtonPressed(component.getId(), buttonPressed(component));
                                 selectedDevice.onButtonReleased(component.getId(), buttonReleased(component));
                             }
-                        }
-                        else {
+                        } else {
                             clearScreen();
                             System.out.println(farbe.gelb + "Keine Controller gefunden" + farbe.reset);
                             System.out.println("Drücke belibige Taste um fortzufahren");
@@ -93,33 +91,42 @@ public class Main {
                 case "2":
                     if (selectedDevice == null) {
                         clearScreen();
-                        System.out.println(farbe.gelb +"Keine Controller ausgewählt" + farbe.reset);
+                        System.out.println(farbe.gelb + "Keine Controller ausgewählt" + farbe.reset);
                         System.out.println("Drücke belibige Taste um fortzufahren");
                         scanner.nextLine();
-                    }else {
+                    } else {
                         clearScreen();
                         System.out.println("Ausgewählt: " + farbe.grün + selectedDevice.getProductName() + farbe.reset);
                         System.out.println("Drücke einen Knopf um ihn anzuzeigen");
-                        var ausführung = true;
-                        while (ausführung) {
-                            try {
-//                                selectedDevice.poll();
+                        var läuft = true;
+                        while (läuft) {
 
-                                List<String> controllerButtons = new ArrayList<>();
-                                for (var button : this.buttons.entrySet()) {
-                                    if (button.getValue() == true) {
-                                        controllerButtons.add(button.getKey().toString());
-                                    }
-                                }
-                                if (!controllerButtons.isEmpty()) {
-                                    System.out.print("\r");
-                                    System.out.print(controllerButtons);
-                                }
+                            var knöppe = selectedDevice.getComponents();
 
-                                TimeUnit.MILLISECONDS.sleep(300);
-                            } catch (Exception e) {
-                                ausführung = false;
+                            for (var component : knöppe) {
+
+//                                var A = XInput.A.id;
+//                                var id = component.getId();
+
+//                                if (XInput.A.id == component.getId()) {
+                                    selectedDevice.onButtonPressed(component.getId());
+                                        System.out.println(" A ");
+
+//                                }
+
+
+
+
+//                                selectedDevice.onButtonReleased(component.getId(), buttonReleased(component));
                             }
+
+//                            for (var button : this.buttons.entrySet()) {
+//                                selectedDevice.onButtonPressed(button.getKey(), () -> {
+//                                    System.out.println("Button is jedrückt: " + button.getKey());
+//                                });
+////                                    System.out.println("Button: " + button.getKey());
+//
+//                            }
                         }
                     }
 
@@ -138,12 +145,12 @@ public class Main {
         }
     }
 
-    public Runnable buttonPressed(InputComponent button){
+    public Runnable buttonPressed(InputComponent button) {
         this.buttons.put(button.getId(), true);
         return null;
     }
 
-    public Runnable buttonReleased(InputComponent button){
+    public Runnable buttonReleased(InputComponent button) {
         this.buttons.put(button.getId(), false);
         return null;
     }
@@ -162,3 +169,4 @@ public class Main {
     }
 
 }
+
