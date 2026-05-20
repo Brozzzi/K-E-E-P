@@ -13,7 +13,7 @@ import de.gurkenlabs.input4j.components.XInput;
 public class Main {
     Map<InputComponent.ID, Boolean> buttons = new HashMap<>();
 
-    void main() {
+    void main() throws InterruptedException {
 
         // Setup
         InputDevice selectedDevice = null;
@@ -102,21 +102,22 @@ public class Main {
                         var knöppe = selectedDevice.getComponents();
 
 
-                        var läuft = true;
-                        while (läuft) {
-
-                            selectedDevice.onButtonPressed(XInput.A, () ->{
-                                    System.out.println("A");});
-
-//                            for (var component : knöppe) {
+                            for (var component : knöppe) {
 //                                selectedDevice.onButtonPressed(component.getId(), buttonPressed(component));
 //                                selectedDevice.onButtonReleased(component.getId(), buttonReleased(component));
 //                            XInput..id == component.getId().id
-//                                selectedDevice.onButtonPressed(component.getId()., () ->
+                                selectedDevice.onButtonPressed(component.getId().id, () ->
 ////                                    buttonPressed(component)
-//                                {  System.out.println(component.getType().name());}
-//                                );
-//                            }
+                                {  System.out.println(component.getType().name());}
+                                );
+                            }
+
+                        var läuft = true;
+                        while (läuft) {
+                            selectedDevice.poll();
+                            Thread.sleep(500);
+//                            selectedDevice.onButtonPressed(XInput.A, () ->{
+//                                    System.out.println("A");});
 
                         }
                     }
