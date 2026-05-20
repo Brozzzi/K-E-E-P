@@ -98,35 +98,26 @@ public class Main {
                         clearScreen();
                         System.out.println("Ausgewählt: " + farbe.grün + selectedDevice.getProductName() + farbe.reset);
                         System.out.println("Drücke einen Knopf um ihn anzuzeigen");
+
+                        var knöppe = selectedDevice.getComponents();
+
+
                         var läuft = true;
                         while (läuft) {
 
-                            var knöppe = selectedDevice.getComponents();
+                            selectedDevice.onButtonPressed(XInput.A, () ->{
+                                    System.out.println("A");});
 
-                            for (var component : knöppe) {
-
-//                                var A = XInput.A.id;
-//                                var id = component.getId();
-
-//                                if (XInput.A.id == component.getId()) {
-                                    selectedDevice.onButtonPressed(component.getId());
-                                        System.out.println(" A ");
-
-//                                }
-
-
-
-
+//                            for (var component : knöppe) {
+//                                selectedDevice.onButtonPressed(component.getId(), buttonPressed(component));
 //                                selectedDevice.onButtonReleased(component.getId(), buttonReleased(component));
-                            }
-
-//                            for (var button : this.buttons.entrySet()) {
-//                                selectedDevice.onButtonPressed(button.getKey(), () -> {
-//                                    System.out.println("Button is jedrückt: " + button.getKey());
-//                                });
-////                                    System.out.println("Button: " + button.getKey());
-//
+//                            XInput..id == component.getId().id
+//                                selectedDevice.onButtonPressed(component.getId()., () ->
+////                                    buttonPressed(component)
+//                                {  System.out.println(component.getType().name());}
+//                                );
 //                            }
+
                         }
                     }
 
@@ -146,9 +137,9 @@ public class Main {
     }
 
     public Runnable buttonPressed(InputComponent button) {
-        this.buttons.put(button.getId(), true);
+       System.out.println(button.getId().name);
         return null;
-    }
+    };
 
     public Runnable buttonReleased(InputComponent button) {
         this.buttons.put(button.getId(), false);
