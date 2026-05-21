@@ -1,12 +1,20 @@
 package org.keep;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import com.studiohartman.jamepad.ControllerButton;
+import com.studiohartman.jamepad.ControllerIndex;
+import com.studiohartman.jamepad.ControllerManager;
+import com.studiohartman.jamepad.ControllerUnpluggedException;
 import de.gurkenlabs.input4j.InputComponent;
 import de.gurkenlabs.input4j.InputDevice;
 import de.gurkenlabs.input4j.InputDevices;
+import de.gurkenlabs.input4j.components.Button;
+import de.gurkenlabs.input4j.components.*;
 import de.gurkenlabs.input4j.components.XInput;
 
 
@@ -46,45 +54,67 @@ public class Main {
 
             switch (eingabe) {
                 case "1":
+/****************************************************************************************/
+//                    try (var inputDevices = InputDevices.init()) {
+//                        if (!inputDevices.getAll().isEmpty()) {
+//                            clearScreen();
+//
+//                            var number = 1;
+//                            for (var inputDevice : inputDevices.getAll()) {
+//                                System.out.println(number + ". " + inputDevice.getProductName());
+//                                existingDevices.add(inputDevice);
+//                                number++;
+//                            }
+//
+//                            System.out.println("Gerät auswählen");
+//                            var controllerEingabe = scanner.next();
+//                            scanner.nextLine();
+//                            var eingabeInt = Integer.parseInt(controllerEingabe);
+//                            selectedDevice = existingDevices.get(eingabeInt - 1);
+//
+//                            var liste = selectedDevice.getComponents();
+//                            for (var component : liste) {
+//                                this.buttons.put(component.getId(), false);
+//                            }
+//
+//                            for (var component : liste) {
+//                                selectedDevice.onButtonPressed(component.getId(), buttonPressed(component));
+//                                selectedDevice.onButtonReleased(component.getId(), buttonReleased(component));
+/****************************************************************************************/
 
-                    try (var inputDevices = InputDevices.init()) {
-                        if (!inputDevices.getAll().isEmpty()) {
-                            clearScreen();
+                    ControllerManager alleKontrollers = new ControllerManager();
+                    alleKontrollers.initSDLGamepad();
 
-                            var number = 1;
-                            for (var inputDevice : inputDevices.getAll()) {
-                                System.out.println(number + ". " + inputDevice.getProductName());
-                                existingDevices.add(inputDevice);
-                                number++;
+                    ControllerIndex currController = alleKontrollers.getControllerIndex(0);
+
+                    while(true) {
+                        alleKontrollers.update(); //If using ControllerIndex, you should call update() to check if a new controller
+                        //was plugged in or unplugged at this index.
+                        try {
+                            if(currController.isButtonPressed(ControllerButton.A)) {
+                                System.out.println("\"A\" on \"" + currController.getName() + "\" is pressed");
                             }
-                            System.out.println("Gerät auswählen");
-                            var controllerEingabe = scanner.next();
-                            scanner.nextLine();
-                            var eingabeInt = Integer.parseInt(controllerEingabe);
-                            selectedDevice = existingDevices.get(eingabeInt - 1);
-
-
-                            var liste = selectedDevice.getComponents();
-                            for (var component : liste) {
-                                this.buttons.put(component.getId(), false);
+                            if(currController.isButtonPressed(ControllerButton.B)) {
+                                break;
                             }
-
-                            for (var component : liste) {
-                                selectedDevice.onButtonPressed(component.getId(), buttonPressed(component));
-                                selectedDevice.onButtonReleased(component.getId(), buttonReleased(component));
-                            }
-                        } else {
-                            clearScreen();
-                            System.out.println(farbe.gelb + "Keine Controller gefunden" + farbe.reset);
-                            System.out.println("Drücke belibige Taste um fortzufahren");
-
-                            scanner.nextLine();
-                            continue;
+                        } catch (ControllerUnpluggedException e) {
+                            break;
                         }
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-
                     }
+
+
+//                        } else {
+//                            clearScreen();
+//                            System.out.println(farbe.gelb + "Keine Controller gefunden" + farbe.reset);
+//                            System.out.println("Drücke belibige Taste um fortzufahren");
+//
+//                            scanner.nextLine();
+//                            continue;
+//                        }
+//                    } catch (IOException e) {
+//                        throw new RuntimeException(e);
+//
+//                    }
                     break;
 
 
@@ -99,26 +129,42 @@ public class Main {
                         System.out.println("Ausgewählt: " + farbe.grün + selectedDevice.getProductName() + farbe.reset);
                         System.out.println("Drücke einen Knopf um ihn anzuzeigen");
 
-                        var knöppe = selectedDevice.getComponents();
+//                        var knöppe = selectedDevice.getComponents();
 
+//
+//                            for (var component : knöppe) {
+////                                selectedDevice.onButtonPressed(component.getId(), buttonPressed(component));
+////                                selectedDevice.onButtonReleased(component.getId(), buttonReleased(component));
 
-                            for (var component : knöppe) {
-//                                selectedDevice.onButtonPressed(component.getId(), buttonPressed(component));
-//                                selectedDevice.onButtonReleased(component.getId(), buttonReleased(component));
-//                            XInput..id == component.getId().id
-                                selectedDevice.onButtonPressed(component.getId().id, () ->
-////                                    buttonPressed(component)
-                                {  System.out.println(component.getType().name());}
-                                );
+////                            XInput..id == component.getId().id
+//
+//                                selectedDevice.onButtonPressed(component.getId().id, () ->
+//////                                    buttonPressed(component)
+//                                {  System.out.println(component.getType().name());}
+//                                );
+//                            }
+                        var ausführung = true;
+                        while (ausführung) {
+                            try {
+                                selectedDevice.poll();
+//                                var liste = selectedDevice.getComponents();
+//                                for (var component : liste) {
+//                                    System.out.println(component);
+
+                                List<String> controllerButtons = new ArrayList<>();
+                                for (var button : this.buttons.entrySet()) {
+                                    if (button.getValue() == true) {
+                                        controllerButtons.add(button.getKey().toString());
+                                    }
+                                }
+                                System.out.print("\r");
+                                System.out.print(controllerButtons);
+                                if (!controllerButtons.isEmpty()) {
+                                }
+                                wait(500);
+                            } catch (Exception e) {
+                                ausführung = false;
                             }
-
-                        var läuft = true;
-                        while (läuft) {
-                            selectedDevice.poll();
-                            Thread.sleep(500);
-//                            selectedDevice.onButtonPressed(XInput.A, () ->{
-//                                    System.out.println("A");});
-
                         }
                     }
 
@@ -138,9 +184,11 @@ public class Main {
     }
 
     public Runnable buttonPressed(InputComponent button) {
-       System.out.println(button.getId().name);
+        this.buttons.put(button.getId(), true);
         return null;
-    };
+    }
+
+    ;
 
     public Runnable buttonReleased(InputComponent button) {
         this.buttons.put(button.getId(), false);
