@@ -105,9 +105,6 @@ public class Main {
                         clearScreen();
                         System.out.println("Ausgewählt: " + farbe.grün + selectedDevice.getProductName() + farbe.reset);
                         System.out.println("Drücke einen Knopf um ihn anzuzeigen");
-
-//                        selectedDevice.onButtonPressed(component.getId(), buttonPressed(component));
-//                        selectedDevice.onButtonReleased(component.getId(), buttonReleased(component));
                         var knöppe = selectedDevice.getComponents();
 
                         var läuft = true;
