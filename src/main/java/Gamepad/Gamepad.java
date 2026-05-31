@@ -7,7 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Gamepad {
-    Map<String, Button> GamepadButtons = new HashMap<>();
+
     Map<String, Button> GamepadAxis = new HashMap<>();
+
+    String hallo = "hallo";
 
 }
