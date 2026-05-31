@@ -59,10 +59,15 @@ public class Main {
                                     number++;
                                 }
                                 System.out.println();
-                                System.out.println("Wähle ein Gerät aus indem du die Nummer eingibst:");
+                                System.out.println("Wähle ein Gerät aus indem du die Nummer eingibst");
+                                System.out.println("Schreibe" + farbe.gelb + " >exit< " + farbe.reset + "um zurück zum Menü zu kommen ");
 
                                 var controllerEingabe = scanner.next();
                                 scanner.nextLine();
+                                if (controllerEingabe.equals("exit")) {
+                                    break;
+                                }
+
                                 var eingabeInt = Integer.parseInt(controllerEingabe);
 
                                 if (eingabeInt < 1 || eingabeInt > existingDevices.size()) {
@@ -121,15 +126,23 @@ public class Main {
                         clearScreen();
                         System.out.println("Ausgewählt: " + farbe.grün + selectedDevice.getProductName() + farbe.reset);
                         System.out.println();
-                        System.out.println("Drücke einen Knopf um ihn anzuzeigen | Schreibe >exit< um rauszugehen ");
+                        System.out.println("Drücke einen Knopf um ihn anzuzeigen");
+                        System.out.println("Schreibe" + farbe.gelb + " >exit< " + farbe.reset + "um zurück zum Menü zu kommen ");
 
                         var läuft = true;
 
                         while (läuft) {
 
                             selectedDevice.poll();
-                            Thread.sleep(16); // ~60 FPS polling rate
+                            Thread.sleep(10);
 
+                            if (System.in.available() > 0){
+                                String input = scanner.nextLine();
+                                if (input.equalsIgnoreCase("exit")) {
+                                    läuft = false;
+                                    clearScreen();
+                                }
+                            }
                         }
                     }
                     break;
