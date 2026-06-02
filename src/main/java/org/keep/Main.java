@@ -1,17 +1,18 @@
 package org.keep;
 
 import java.io.IOException;
-import java.security.Key;
 import java.security.KeyException;
 import java.util.*;
-
 import de.gurkenlabs.input4j.InputComponent;
 import de.gurkenlabs.input4j.InputDevice;
 import de.gurkenlabs.input4j.InputDevices;
+import Gamepad.Gamepad;
+import Gamepad.Xbox;
 
 public class Main {
 
     Map<InputComponent.ID, Boolean> buttons = new HashMap<>();
+    Gamepad selectedGamepad = null;
 
     void main() throws InterruptedException, IOException, KeyException {
         // Setup
@@ -64,13 +65,25 @@ public class Main {
 
                                 if (eingabeInt < 1 || eingabeInt > existingDevices.size()) {
                                     clearScreen();
-                                    System.out.println(farbe.rot + "❌ Ungültige Auswahl! Bitte wähle eine Nummer zwischen 1 und " + existingDevices.size() + farbe.reset);
+                                    System.out.println(farbe.rot + "Ungültige Auswahl! Bitte wähle eine Nummer zwischen 1 und " + existingDevices.size() + farbe.reset);
                                     System.out.println("Drücke eine Taste um fortzufahren...");
                                     scanner.nextLine();
                                     continue;
                                 }
 
                                 selectedDevice = existingDevices.get(eingabeInt - 1);
+
+                                //############################################################
+                                String productName = selectedDevice.getProductName();
+                                String normalized = productName == null ? "" : productName.toLowerCase(Locale.ROOT);
+                                if (normalized.contains("xbox") || normalized.contains("x-box")) {
+                                    selectedGamepad = new Xbox();
+                                    System.out.println(farbe.grün + "Mapping: Xbox erkannt - benutze Xbox-Mapping" + farbe.reset);
+                                } else {
+                                    selectedGamepad = null; // kein spezielles Mapping vorhanden
+                                    System.out.println(farbe.gelb + "Kein spezifisches Mapping gefunden - benutze Standard-IDs" + farbe.reset);
+                                }
+                                //############################################################
 
                                 var liste = selectedDevice.getComponents();
                                 for (var component : liste) {
@@ -83,7 +96,7 @@ public class Main {
                                 }
                             } catch (NumberFormatException e) {
                                 clearScreen();
-                                System.out.println(farbe.rot + "❌ Fehler: Bitte gib eine Zahl ein!" + farbe.reset);
+                                System.out.println(farbe.rot + "Fehler: Bitte gib eine Zahl ein!" + farbe.reset);
                                 System.out.println("Drücke eine Taste um fortzufahren...");
                                 scanner.nextLine();
                                 continue;
@@ -120,7 +133,7 @@ public class Main {
                         while (läuft) {
                             try {
                                 selectedDevice.poll();
-                                Thread.sleep(16); // ~60 FPS polling rate
+                                Thread.sleep(16);
                             } catch (InterruptedException e) {
                                 läuft = false;
                             }
@@ -154,12 +167,30 @@ public class Main {
 
     public void buttonPressedOutput(InputComponent button) {
         System.out.print("\r");
-        System.out.print(farbe.grün + "✓"+ farbe.reset + " Knopf: " + button.getId().name);
+        //############################################################
+        String label = null;
+        if (selectedGamepad != null) {
+            label = selectedGamepad.getButtonName(button.getId());
+        }
+        if (label == null) {
+            label = button.getId().name;
+        }
+        System.out.print(farbe.grün + "✓"+ farbe.reset + " Knopf: " + label);
+        //############################################################
     }
 
     public void buttonReleasedOutput(InputComponent button) {
         System.out.print("\r");
-        System.out.print(farbe.rot + "✗" + farbe.reset + " Knopf: " + button.getId().name);
+        //############################################################
+        String label = null;
+        if (selectedGamepad != null) {
+            label = selectedGamepad.getButtonName(button.getId());
+        }
+        if (label == null) {
+            label = button.getId().name;
+        }
+        System.out.print(farbe.rot + "✗" + farbe.reset + " Knopf: " + label);
+        //############################################################
     }
 
     public static void clearScreen() {
