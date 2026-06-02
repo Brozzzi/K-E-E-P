@@ -49,23 +49,31 @@ public class Main {
                     if (inputDevicesPlugin != null) {
                         if (!inputDevicesPlugin.getAll().isEmpty()) {
                             clearScreen();
-
-                            var number = 1;
-                            existingDevices.clear();
-                            for (var inputDevice : inputDevicesPlugin.getAll()) {
-                                System.out.println(number + ". " + inputDevice.getProductName());
-                                existingDevices.add(inputDevice);
-                                number++;
-                            }
-                            System.out.println("Wähle ein Gerät aus indem du die Nummer eingibst:");
                             try {
+                                var number = 1;
+                                existingDevices.clear();
+                                System.out.println(farbe.fett + "====<<Gefundene Geräte>>====" + farbe.reset);
+                                System.out.println();
+                                for (var inputDevice : inputDevicesPlugin.getAll()) {
+                                    System.out.println(farbe.grün + number + ". " + farbe.reset + inputDevice.getProductName());
+                                    existingDevices.add(inputDevice);
+                                    number++;
+                                }
+                                System.out.println();
+                                System.out.println("Wähle ein Gerät aus indem du die Nummer eingibst");
+                                System.out.println("Schreibe" + farbe.gelb + " >exit< " + farbe.reset + "um zurück zum Menü zu kommen ");
+
                                 var controllerEingabe = scanner.next();
                                 scanner.nextLine();
+                                if (controllerEingabe.equals("exit")) {
+                                    break;
+                                }
+
                                 var eingabeInt = Integer.parseInt(controllerEingabe);
 
                                 if (eingabeInt < 1 || eingabeInt > existingDevices.size()) {
                                     clearScreen();
-                                    System.out.println(farbe.rot + "Ungültige Auswahl! Bitte wähle eine Nummer zwischen 1 und " + existingDevices.size() + farbe.reset);
+                                    System.out.println(farbe.rot + "--Ungültige Auswahl! Wähle eine vorhandene Nummer aus--" + farbe.reset);
                                     System.out.println("Drücke eine Taste um fortzufahren...");
                                     scanner.nextLine();
                                     continue;
@@ -97,6 +105,7 @@ public class Main {
                             } catch (NumberFormatException e) {
                                 clearScreen();
                                 System.out.println(farbe.rot + "Fehler: Bitte gib eine Zahl ein!" + farbe.reset);
+                                System.out.println();
                                 System.out.println("Drücke eine Taste um fortzufahren...");
                                 scanner.nextLine();
                                 continue;
@@ -104,6 +113,7 @@ public class Main {
                         } else {
                             clearScreen();
                             System.out.println(farbe.gelb + "Keine Controller gefunden" + farbe.reset);
+                            System.out.println();
                             System.out.println("Drücke belibige Taste um fortzufahren");
 
                             scanner.nextLine();
@@ -112,6 +122,7 @@ public class Main {
                     } else {
                         clearScreen();
                         System.out.println(farbe.rot + "Fehler: InputDevices konnten nicht initialisiert werden" + farbe.reset);
+                        System.out.println();
                         System.out.println("Drücke belibige Taste um fortzufahren");
                         scanner.nextLine();
                     }
@@ -121,21 +132,29 @@ public class Main {
                     if (selectedDevice == null) {
                         clearScreen();
                         System.out.println(farbe.gelb + "Keine Controller ausgewählt" + farbe.reset);
+                        System.out.println();
                         System.out.println("Drücke belibige Taste um fortzufahren");
                         scanner.nextLine();
                     } else {
                         clearScreen();
                         System.out.println("Ausgewählt: " + farbe.grün + selectedDevice.getProductName() + farbe.reset);
-                        System.out.println("Drücke einen Knopf um ihn anzuzeigen | Gebe ");
+                        System.out.println();
+                        System.out.println("Drücke einen Knopf um ihn anzuzeigen");
+                        System.out.println("Schreibe" + farbe.gelb + " >exit< " + farbe.reset + "um zurück zum Menü zu kommen ");
 
                         var läuft = true;
 
                         while (läuft) {
-                            try {
-                                selectedDevice.poll();
-                                Thread.sleep(16);
-                            } catch (InterruptedException e) {
-                                läuft = false;
+
+                            selectedDevice.poll();
+                            Thread.sleep(10);
+
+                            if (System.in.available() > 0){
+                                String input = scanner.nextLine();
+                                if (input.equalsIgnoreCase("exit")) {
+                                    läuft = false;
+                                    clearScreen();
+                                }
                             }
                         }
                     }
@@ -156,7 +175,9 @@ public class Main {
             }
         }
     }
+
     Farben farbe = new Farben();
+
     public Runnable buttonPressed(InputComponent button) {
         return () -> buttonPressedOutput(button);
     }
