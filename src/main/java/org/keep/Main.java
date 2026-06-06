@@ -82,7 +82,6 @@ public class Main {
 
                                 selectedDevice = existingDevices.get(eingabeInt - 1);
 
-                                //############################################################
                                 String productName = selectedDevice.getProductName();
                                 String normalized = productName == null ? "" : productName.toLowerCase(Locale.ROOT);
                                 if (normalized.contains("xbox") || normalized.contains("x-box")) {
@@ -92,7 +91,6 @@ public class Main {
                                     selectedGamepad = null; // kein spezielles Mapping vorhanden
                                     System.out.println(farbe.gelb + "Kein spezifisches Mapping gefunden - benutze Standard-IDs" + farbe.reset);
                                 }
-                                //############################################################
 
                                 var liste = selectedDevice.getComponents();
                                 for (var component : liste) {
@@ -189,7 +187,6 @@ public class Main {
 
     public void buttonPressedOutput(InputComponent button) {
         System.out.print("\r");
-        //############################################################
         String label = null;
         if (selectedGamepad != null) {
             label = selectedGamepad.getButtonName(button.getId());
@@ -198,12 +195,10 @@ public class Main {
             label = button.getId().name;
         }
         System.out.print(" Knopf: " + farbe.grün + label + "  "  + farbe.reset );
-        //############################################################
     }
 
     public void buttonReleasedOutput(InputComponent button) {
         System.out.print("\r");
-        //############################################################
         String label = null;
         if (selectedGamepad != null) {
             label = selectedGamepad.getButtonName(button.getId());
@@ -212,7 +207,6 @@ public class Main {
             label = button.getId().name;
         }
         System.out.print(" Knopf: " + farbe.rot + label + "  " + farbe.reset);
-        //############################################################
     }
 
     public static void clearScreen() {
