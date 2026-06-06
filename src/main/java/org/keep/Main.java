@@ -54,6 +54,7 @@ public class Main {
                                 existingDevices.clear();
                                 System.out.println(farbe.fett + "====<<Gefundene Geräte>>====" + farbe.reset);
                                 System.out.println();
+
                                 for (var inputDevice : inputDevicesPlugin.getAll()) {
                                     System.out.println(farbe.grün + number + ". " + farbe.reset + inputDevice.getProductName());
                                     existingDevices.add(inputDevice);
@@ -196,7 +197,7 @@ public class Main {
         if (label == null) {
             label = button.getId().name;
         }
-        System.out.print(farbe.grün + "✓"+ farbe.reset + " Knopf: " + label);
+        System.out.print(" Knopf: " + farbe.grün + label + "  "  + farbe.reset );
         //############################################################
     }
 
@@ -210,7 +211,7 @@ public class Main {
         if (label == null) {
             label = button.getId().name;
         }
-        System.out.print(farbe.rot + "✗" + farbe.reset + " Knopf: " + label);
+        System.out.print(" Knopf: " + farbe.rot + label + "  " + farbe.reset);
         //############################################################
     }
 
