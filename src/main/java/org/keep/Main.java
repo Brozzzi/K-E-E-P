@@ -86,10 +86,8 @@ public class Main {
                                 String normalized = productName == null ? "" : productName.toLowerCase(Locale.ROOT);
                                 if (normalized.contains("xbox") || normalized.contains("x-box")) {
                                     selectedGamepad = new Xbox();
-                                    System.out.println(farbe.grün + "Mapping: Xbox erkannt - benutze Xbox-Mapping" + farbe.reset);
                                 } else {
-                                    selectedGamepad = null; // kein spezielles Mapping vorhanden
-                                    System.out.println(farbe.gelb + "Kein spezifisches Mapping gefunden - benutze Standard-IDs" + farbe.reset);
+                                    selectedGamepad = null;
                                 }
 
                                 var liste = selectedDevice.getComponents();
