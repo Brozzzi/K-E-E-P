@@ -5,7 +5,7 @@ import de.gurkenlabs.input4j.InputComponent;
 
 public class Xbox extends Gamepad {
     public Xbox() {
-        super("Xbox Controller");
+        super("X-Box");
         buttonNames.put(InputComponent.ID.getButton(0), "A");
         buttonNames.put(InputComponent.ID.getButton(1), "B");
         buttonNames.put(InputComponent.ID.getButton(2), "X");
